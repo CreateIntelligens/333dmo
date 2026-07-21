@@ -1,18 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --accent: #3b82f6;
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+@layer base {
+  /* Tokyo Night — Dark */
+  .dark {
+    --bg-primary: #1a1b26;
+    --bg-secondary: #24283b;
+    --bg-tertiary: #414868;
+    --text-primary: #c0caf5;
+    --text-secondary: #a9b1d6;
+    --text-muted: #565f89;
+    --border: #3b4261;
+    --accent: #7aa2f7;
+    --accent-soft: rgba(122, 162, 247, 0.15);
+    --green: #9ece6a;
+    --green-soft: rgba(158, 206, 106, 0.15);
+    --yellow: #e0af68;
+    --yellow-soft: rgba(224, 175, 104, 0.15);
+    --red: #f7768e;
+    --red-soft: rgba(247, 118, 142, 0.15);
+    --purple: #bb9af7;
+    --cyan: #7dcfff;
+    --orange: #ff9e64;
+  }
+
+  /* Claude-inspired — Light */
+  .light {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f7f7f8;
+    --bg-tertiary: #ececf1;
+    --text-primary: #1a1a1a;
+    --text-secondary: #6b6b6b;
+    --text-muted: #8e8e8e;
+    --border: #e5e5e5;
+    --accent: #7c6eef;
+    --accent-soft: rgba(124, 110, 239, 0.08);
+    --green: #1a7f37;
+    --green-soft: rgba(26, 127, 55, 0.08);
+    --yellow: #9a6700;
+    --yellow-soft: rgba(154, 103, 0, 0.08);
+    --red: #cf222e;
+    --red-soft: rgba(207, 34, 46, 0.08);
+    --purple: #8250df;
+    --cyan: #0969da;
+    --orange: #bc4c00;
+  }
+
+  body {
+    @apply antialiased;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
 }
 
-body {
-  @apply bg-slate-900 text-slate-100 antialiased;
+@layer components {
+  .card {
+    @apply rounded-xl;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .card-hover {
+    @apply transition-colors duration-150;
+  }
+  .card-hover:hover {
+    background-color: var(--bg-tertiary);
+  }
+}
+
+/* Semantic utility classes */
+.bg-primary   { background-color: var(--bg-primary); }
+.bg-secondary { background-color: var(--bg-secondary); }
+.bg-tertiary  { background-color: var(--bg-tertiary); }
+.text-primary   { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted     { color: var(--text-muted); }
+.text-accent    { color: var(--accent); }
+.text-green     { color: var(--green); }
+.text-yellow    { color: var(--yellow); }
+.text-red       { color: var(--red); }
+.text-cyan      { color: var(--cyan); }
+.text-purple    { color: var(--purple); }
+.text-orange    { color: var(--orange); }
+.border-themed  { border-color: var(--border); }
+.bg-accent-soft  { background-color: var(--accent-soft); }
+.bg-green-soft   { background-color: var(--green-soft); }
+.bg-yellow-soft  { background-color: var(--yellow-soft); }
+.bg-red-soft     { background-color: var(--red-soft); }
+
+/* Recharts tooltip override */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+}
+.recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-label {
+  color: var(--text-secondary) !important;
+}
+.recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-item {
+  color: var(--text-primary) !important;
 }

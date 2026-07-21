@@ -5,6 +5,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 import './index.css';
 
+const saved = (localStorage.getItem('333dmo-theme') as 'dark' | 'light') || 'dark';
+document.documentElement.classList.add(saved);
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -21,5 +24,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <App />
       </BrowserRouter>
     </QueryClientProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

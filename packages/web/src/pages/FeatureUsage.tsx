@@ -4,7 +4,7 @@ import { useStore } from '../stores/useStore';
 import { getPermissionLabel } from '../lib/permissions';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
-const COLORS = ['#3b82f6', '#8b5cf6', '#06b6d4', '#f59e0b', '#10b981', '#ef4444', '#ec4899', '#6366f1'];
+const COLORS = ['#7aa2f7', '#bb9af7', '#7dcfff', '#e0af68', '#9ece6a', '#f7768e', '#ff9e64', '#73daca'];
 
 export default function FeatureUsage() {
   const { tenantId, period } = useStore();
@@ -22,29 +22,17 @@ export default function FeatureUsage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">功能使用頻率</h2>
+      <h2 className="text-2xl font-bold text-primary">功能使用頻率</h2>
 
-      <div className="bg-slate-800 rounded-xl p-6">
-        <h3 className="text-sm font-medium text-slate-300 mb-4">
+      <div className="card p-6">
+        <h3 className="text-sm font-medium text-secondary mb-4">
           各功能呼叫次數（{period}）
         </h3>
         <ResponsiveContainer width="100%" height={Math.max(300, featureData.length * 40)}>
           <BarChart data={featureData} layout="vertical">
-            <XAxis type="number" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-            <YAxis
-              type="category"
-              dataKey="label"
-              tick={{ fontSize: 11, fill: '#94a3b8' }}
-              width={140}
-            />
-            <Tooltip
-              contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
-              formatter={(value: number, _name: string, props: any) => [
-                `${value} 次`,
-                props.payload.permission || '',
-              ]}
-              labelFormatter={(_label: string, payload: any) => payload?.[0]?.payload?.label || ''}
-            />
+            <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
+            <YAxis type="category" dataKey="label" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} width={140} />
+            <Tooltip />
             <Bar dataKey="count" radius={[0, 4, 4, 0]}>
               {featureData.map((_: any, i: number) => (
                 <Cell key={i} fill={COLORS[i % COLORS.length]} />
@@ -54,23 +42,23 @@ export default function FeatureUsage() {
         </ResponsiveContainer>
       </div>
 
-      <div className="bg-slate-800 rounded-xl overflow-hidden">
+      <div className="card overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-700 text-slate-400">
-              <th className="text-left p-3">功能</th>
-              <th className="text-left p-3">Permission</th>
-              <th className="text-right p-3">使用次數</th>
-              <th className="text-right p-3">佔比</th>
+            <tr style={{ borderBottom: '1px solid var(--border)' }}>
+              <th className="text-left p-3 text-muted font-medium">功能</th>
+              <th className="text-left p-3 text-muted font-medium">Permission</th>
+              <th className="text-right p-3 text-muted font-medium">使用次數</th>
+              <th className="text-right p-3 text-muted font-medium">佔比</th>
             </tr>
           </thead>
           <tbody>
             {featureData.map((item: any) => (
-              <tr key={item.permission} className="border-b border-slate-700/50 hover:bg-slate-700/30">
-                <td className="p-3 font-medium">{item.label}</td>
-                <td className="p-3 text-slate-400 font-mono text-xs">{item.permission || '—'}</td>
-                <td className="p-3 text-right font-mono">{item.count.toLocaleString()}</td>
-                <td className="p-3 text-right text-slate-400">
+              <tr key={item.permission} className="transition-colors" style={{ borderBottom: '1px solid var(--border)' }}>
+                <td className="p-3 font-medium text-primary">{item.label}</td>
+                <td className="p-3 text-muted font-mono text-xs">{item.permission || '—'}</td>
+                <td className="p-3 text-right font-mono text-primary">{item.count.toLocaleString()}</td>
+                <td className="p-3 text-right text-muted">
                   {total > 0 ? ((item.count / total) * 100).toFixed(1) : 0}%
                 </td>
               </tr>

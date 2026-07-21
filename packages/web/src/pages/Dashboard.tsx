@@ -2,7 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { useStore } from '../stores/useStore';
 import { getPermissionLabel } from '../lib/permissions';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, Cell } from 'recharts';
+
+const COLORS = ['#7aa2f7', '#bb9af7', '#7dcfff', '#e0af68', '#9ece6a', '#f7768e', '#ff9e64', '#73daca'];
 
 export default function Dashboard() {
   const { tenantId, period } = useStore();
@@ -34,7 +36,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">儀表板</h2>
+      <h2 className="text-2xl font-bold text-primary">儀表板</h2>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-3 gap-4">
@@ -45,33 +47,30 @@ export default function Dashboard() {
 
       {/* Charts */}
       <div className="grid grid-cols-2 gap-6">
-        {/* Timeline */}
-        <div className="bg-slate-800 rounded-xl p-4">
-          <h3 className="text-sm font-medium text-slate-300 mb-4">API 呼叫趨勢</h3>
+        <div className="card p-5">
+          <h3 className="text-sm font-medium text-secondary mb-4">API 呼叫趨勢</h3>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={timelineData}>
-              <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-              <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} />
-              <Tooltip
-                contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
-                labelStyle={{ color: '#94a3b8' }}
-              />
-              <Line type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} dot={false} />
+              <XAxis dataKey="time" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
+              <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
+              <Tooltip />
+              <Line type="monotone" dataKey="count" stroke="var(--accent)" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Feature Usage */}
-        <div className="bg-slate-800 rounded-xl p-4">
-          <h3 className="text-sm font-medium text-slate-300 mb-4">功能使用排行</h3>
+        <div className="card p-5">
+          <h3 className="text-sm font-medium text-secondary mb-4">功能使用排行</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={featureData} layout="vertical">
-              <XAxis type="number" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-              <YAxis type="category" dataKey="label" tick={{ fontSize: 11, fill: '#94a3b8' }} width={140} />
-              <Tooltip
-                contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
-              />
-              <Bar dataKey="count" fill="#3b82f6" radius={[0, 4, 4, 0]} />
+              <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
+              <YAxis type="category" dataKey="label" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} width={120} />
+              <Tooltip />
+              <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                {featureData.map((_: any, i: number) => (
+                  <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -82,11 +81,11 @@ export default function Dashboard() {
 
 function KpiCard({ title, value, icon }: { title: string; value: number; icon: string }) {
   return (
-    <div className="bg-slate-800 rounded-xl p-4 flex items-center gap-4">
+    <div className="card p-5 flex items-center gap-4">
       <div className="text-3xl">{icon}</div>
       <div>
-        <p className="text-sm text-slate-400">{title}</p>
-        <p className="text-2xl font-bold">{value.toLocaleString()}</p>
+        <p className="text-sm text-muted">{title}</p>
+        <p className="text-2xl font-bold text-primary">{value.toLocaleString()}</p>
       </div>
     </div>
   );
