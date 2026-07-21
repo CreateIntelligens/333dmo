@@ -190,10 +190,12 @@ docker compose logs -f server
 
 | 服務 | Port | 說明 |
 |------|------|------|
-| Web (nginx) | 80 | Dashboard 前端 |
-| Server (Fastify) | 3100 | API 後端 |
+| Web (nginx) | 8090 | Dashboard 前端 + 反向代理 API |
+| Server (Fastify) | 3100 | API 後端（不對外） |
 | PostgreSQL | 5432 | 資料庫 |
 | Redis | 6379 | 快取 |
+
+**存取方式**：瀏覽器開啟 `http://<host>:8090`，nginx 會自動將 `/api/*` 請求 proxy 到 Fastify (3100)。使用者只需記住一個 port 8090。
 
 ### 開發模式
 
