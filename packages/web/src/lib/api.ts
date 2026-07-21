@@ -23,6 +23,8 @@ export const api = {
   getTimeline: (period = '7d', granularity = 'hour') =>
     request(`/stats/timeline?period=${period}&granularity=${granularity}`),
   getUsers: (period = '7d') => request(`/stats/users?period=${period}`),
+  getComparison: () => request(`/stats/comparison`),
+  getMarquee: () => fetch(`${API_BASE}/stats/marquee`).then((r) => r.json()),
   getLogs: (params?: Record<string, string>) => {
     const query = new URLSearchParams(params).toString();
     return request(`/logs?${query}`);

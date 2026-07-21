@@ -24,7 +24,14 @@ export default function Dashboard() {
     queryFn: () => api.getTimeline(period),
   });
 
+  const { data: comparison } = useQuery({
+    queryKey: ['comparison', tenantId],
+    queryFn: () => api.getComparison(),
+  });
+
   const overviewData = overview?.data;
+  const comparisonData = comparison?.data;
+
   const featureData = (features?.data || []).map((f: any) => ({
     ...f,
     label: getPermissionLabel(f.permission),
@@ -45,8 +52,69 @@ export default function Dashboard() {
         <KpiCard title="使用功能數" value={overviewData?.uniqueFeatures || 0} icon="🧩" />
       </div>
 
+      {/* Comparison Analysis */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="card p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-primary">前一日 / 今日 對比</h3>
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}>
+              今日 (00:00 - 現在) vs 昨日 (同時段)
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <ComparisonMetric 
+              label="API 呼叫" 
+              current={comparisonData?.daily?.today?.requests} 
+              previous={comparisonData?.daily?.yesterday?.requests} 
+              change={comparisonData?.daily?.change?.requests} 
+            />
+            <ComparisonMetric 
+              label="活躍使用者" 
+              current={comparisonData?.daily?.today?.users} 
+              previous={comparisonData?.daily?.yesterday?.users} 
+              change={comparisonData?.daily?.change?.users} 
+            />
+            <ComparisonMetric 
+              label="使用功能數" 
+              current={comparisonData?.daily?.today?.features} 
+              previous={comparisonData?.daily?.yesterday?.features} 
+              change={comparisonData?.daily?.change?.features} 
+            />
+          </div>
+        </div>
+
+        <div className="card p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-primary">上週 / 本週 對比</h3>
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}>
+              本週 (週一 - 現在) vs 上週 (同時段)
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <ComparisonMetric 
+              label="API 呼叫" 
+              current={comparisonData?.weekly?.thisWeek?.requests} 
+              previous={comparisonData?.weekly?.lastWeek?.requests} 
+              change={comparisonData?.weekly?.change?.requests} 
+            />
+            <ComparisonMetric 
+              label="活躍使用者" 
+              current={comparisonData?.weekly?.thisWeek?.users} 
+              previous={comparisonData?.weekly?.lastWeek?.users} 
+              change={comparisonData?.weekly?.change?.users} 
+            />
+            <ComparisonMetric 
+              label="使用功能數" 
+              current={comparisonData?.weekly?.thisWeek?.features} 
+              previous={comparisonData?.weekly?.lastWeek?.features} 
+              change={comparisonData?.weekly?.change?.features} 
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Charts */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card p-5">
           <h3 className="text-sm font-medium text-secondary mb-4">API 呼叫趨勢</h3>
           <ResponsiveContainer width="100%" height={250}>
@@ -86,6 +154,38 @@ function KpiCard({ title, value, icon }: { title: string; value: number; icon: s
       <div>
         <p className="text-sm text-muted">{title}</p>
         <p className="text-2xl font-bold text-primary">{value.toLocaleString()}</p>
+      </div>
+    </div>
+  );
+}
+
+function ComparisonMetric({ label, current = 0, previous = 0, change = 0 }: { label: string; current: number; previous: number; change: number }) {
+  const isUp = change > 0;
+  const isDown = change < 0;
+  
+  return (
+    <div className="flex flex-col p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border)' }}>
+      <span className="text-xs text-muted mb-1 block">{label}</span>
+      <div className="flex items-baseline gap-1 flex-wrap">
+        <span className="text-base font-bold text-primary">{current?.toLocaleString() ?? 0}</span>
+        <span className="text-[10px] text-muted">/ {previous?.toLocaleString() ?? 0}</span>
+      </div>
+      <div className="mt-2 flex">
+        {isUp && (
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded flex items-center gap-0.5 bg-green-soft text-green">
+            ↑ +{change}%
+          </span>
+        )}
+        {isDown && (
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded flex items-center gap-0.5 bg-red-soft text-red">
+            ↓ {change}%
+          </span>
+        )}
+        {!isUp && !isDown && (
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-tertiary text-muted" style={{ backgroundColor: 'var(--bg-tertiary)' }}>
+            0%
+          </span>
+        )}
       </div>
     </div>
   );

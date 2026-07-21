@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { db, schema } from '../db/index.js';
-import { eq, and, desc, gte, sql, ne } from 'drizzle-orm';
+import { eq, and, desc, gte, lte, sql, ne } from 'drizzle-orm';
+import dayjs from 'dayjs';
 
 function getTenantId(request: any): string {
   const tenantId = request.headers['x-tenant-id'] as string;
@@ -156,5 +157,149 @@ export async function statsRoutes(app: FastifyInstance) {
         period: `${days}d`,
       },
     });
+  });
+
+  // Stats comparison (Today vs Yesterday, This Week vs Last Week)
+  app.get('/stats/comparison', async (request, reply) => {
+    const tenantId = getTenantId(request);
+
+    const now = dayjs();
+    
+    // Today so far: 00:00:00 today -> now
+    const todayStart = now.startOf('day');
+    const todayEnd = now;
+
+    // Yesterday so far: 00:00:00 yesterday -> same time yesterday
+    const yesterdayStart = now.subtract(1, 'day').startOf('day');
+    const yesterdayEnd = now.subtract(1, 'day');
+
+    // This week so far: Monday 00:00:00 of this week -> now
+    const dayOfWeek = now.day();
+    const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const thisWeekStart = now.subtract(daysToSubtract, 'day').startOf('day');
+    const thisWeekEnd = now;
+
+    // Last week same period: last Monday 00:00:00 -> last week same time
+    const lastWeekStart = thisWeekStart.subtract(7, 'day');
+    const lastWeekEnd = now.subtract(7, 'day');
+
+    const getMetrics = async (start: dayjs.Dayjs, end: dayjs.Dayjs) => {
+      const [requests] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(schema.activityLogs)
+        .where(
+          and(
+            eq(schema.activityLogs.tenantId, tenantId),
+            gte(schema.activityLogs.createdAt, start.toDate()),
+            lte(schema.activityLogs.createdAt, end.toDate())
+          )
+        );
+
+      const [users] = await db
+        .select({ count: sql<number>`count(distinct ${schema.activityLogs.userId})::int` })
+        .from(schema.activityLogs)
+        .where(
+          and(
+            eq(schema.activityLogs.tenantId, tenantId),
+            gte(schema.activityLogs.createdAt, start.toDate()),
+            lte(schema.activityLogs.createdAt, end.toDate())
+          )
+        );
+
+      const [features] = await db
+        .select({ count: sql<number>`count(distinct ${schema.activityLogs.permission})::int` })
+        .from(schema.activityLogs)
+        .where(
+          and(
+            eq(schema.activityLogs.tenantId, tenantId),
+            gte(schema.activityLogs.createdAt, start.toDate()),
+            lte(schema.activityLogs.createdAt, end.toDate())
+          )
+        );
+
+      return {
+        requests: requests?.count || 0,
+        users: users?.count || 0,
+        features: features?.count || 0,
+      };
+    };
+
+    const [todayStats, yesterdayStats, thisWeekStats, lastWeekStats] = await Promise.all([
+      getMetrics(todayStart, todayEnd),
+      getMetrics(yesterdayStart, yesterdayEnd),
+      getMetrics(thisWeekStart, thisWeekEnd),
+      getMetrics(lastWeekStart, lastWeekEnd),
+    ]);
+
+    const calculateChange = (current: number, previous: number) => {
+      if (previous === 0) return current > 0 ? 100 : 0;
+      return parseFloat((((current - previous) / previous) * 100).toFixed(1));
+    };
+
+    return reply.send({
+      data: {
+        daily: {
+          today: todayStats,
+          yesterday: yesterdayStats,
+          change: {
+            requests: calculateChange(todayStats.requests, yesterdayStats.requests),
+            users: calculateChange(todayStats.users, yesterdayStats.users),
+            features: calculateChange(todayStats.features, yesterdayStats.features),
+          },
+        },
+        weekly: {
+          thisWeek: thisWeekStats,
+          lastWeek: lastWeekStats,
+          change: {
+            requests: calculateChange(thisWeekStats.requests, lastWeekStats.requests),
+            users: calculateChange(thisWeekStats.users, lastWeekStats.users),
+            features: calculateChange(thisWeekStats.features, lastWeekStats.features),
+          },
+        },
+      },
+    });
+  });
+
+  // Marquee stats (for all tenants)
+  app.get('/stats/marquee', async (_request, reply) => {
+    const distinctTenants = await db
+      .selectDistinct({ tenantId: schema.activityLogs.tenantId })
+      .from(schema.activityLogs)
+      .where(ne(schema.activityLogs.tenantId, ''));
+
+    const tenantsList = distinctTenants.map((t) => t.tenantId);
+
+    const now = new Date();
+    const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+    const activeUsers = await db
+      .select({
+        tenantId: schema.activityLogs.tenantId,
+        count: sql<number>`count(distinct ${schema.activityLogs.userId})::int`,
+      })
+      .from(schema.activityLogs)
+      .where(gte(schema.activityLogs.createdAt, tenMinutesAgo))
+      .groupBy(schema.activityLogs.tenantId);
+
+    const apiCounts = await db
+      .select({
+        tenantId: schema.activityLogs.tenantId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(schema.activityLogs)
+      .where(gte(schema.activityLogs.createdAt, twentyFourHoursAgo))
+      .groupBy(schema.activityLogs.tenantId);
+
+    const activeUsersMap = new Map(activeUsers.map((item) => [item.tenantId, item.count]));
+    const apiCountsMap = new Map(apiCounts.map((item) => [item.tenantId, item.count]));
+
+    const data = tenantsList.map((tId) => ({
+      tenantId: tId,
+      onlineUsers: activeUsersMap.get(tId) || 0,
+      apiCount24h: apiCountsMap.get(tId) || 0,
+    }));
+
+    return reply.send({ data });
   });
 }
