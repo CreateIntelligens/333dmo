@@ -14,6 +14,34 @@
 
 333dmo 不需要，也不應該連線到客戶 line-crm 的資料庫。每個客戶只用 `X-Tenant-Id` 分流。
 
+## Monitoring 行為
+
+`ApiActivityLog` 會追蹤 API middleware stack 中的請求，並送出：
+
+| 欄位 | 說明 |
+|---|---|
+| `tenant_id` | 由 `MONITORING_TENANT_ID` 決定 |
+| `user_id` | 優先取 `$request->user()?->id`，再取 `current_user_id`、`client_user` |
+| `permission` | route name 或 controller/method 推導出的功能名稱 |
+| `method` | HTTP method |
+| `endpoint` | API path |
+| `status_code` | 原始 API response status |
+| `metadata` | IP 與 User-Agent |
+
+下列路徑會被排除：`health`、`token`、`token/refresh`、`token/revoke`、`run-migrate`、`ws-test`。
+
+Middleware 在 Laravel response object 產生後直接 POST 到 333dmo，timeout 為 3 秒。監控服務故障不會改變原 API response，但同步 POST 可能讓請求完成時間增加最多約 3 秒。
+
+### 暫停某客戶的 monitoring
+
+在該客戶 runtime `.env` 清空 URL 即可暫停推送：
+
+```env
+MONITORING_API_URL=
+```
+
+修改後必須重建或重啟使用該 `.env` 的容器。不要用停止 queue worker 的方式暫停，因為目前推送不是透過 queue `dispatch()`。
+
 ## 開始前確認
 
 先準備以下資料：
@@ -65,6 +93,9 @@ git -C "/path/to/line-crm-<customer-branch>" cherry-pick \
 確認以下內容存在：
 
 ```bash
+grep -n "ApiActivityLog" bootstrap/app.php
+grep -n "current_user_id" app/Http/Middleware/ApiActivityLog.php
+grep -n "MONITORING" .env.example config/monitoring.php
 ```
 
 ## 2. 確認 CI 會建置與部署這個 branch
@@ -217,6 +248,8 @@ curl -s 'http://office.fanpokka.ai:3100/api/v1/logs?limit=5' \
 ### `user_id` 是 null
 
 line-crm 的 `AuthJWTCheck` 會把 user id 放進 request 的 `current_user_id`，不是 Laravel 預設的 `$request->user()`。確認 middleware 是最新版本，並使用已登入請求測試。
+
+未登入的測試請求出現 `user_id: null` 是正常的；要驗證 user id，必須使用真實登入後的 API 請求。
 
 ### CI pipeline 紅色
 
