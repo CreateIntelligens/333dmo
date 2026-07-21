@@ -17,10 +17,10 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 # Copy server source
 COPY packages/server/ ./packages/server/
 
-# Build
 WORKDIR /app/packages/server
-RUN pnpm drizzle-kit generate || true
+
+RUN chmod +x entrypoint.sh
 
 EXPOSE 3100
 
-CMD ["node", "--import", "tsx", "src/index.ts"]
+CMD ["./entrypoint.sh"]
