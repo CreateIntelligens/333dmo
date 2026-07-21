@@ -47,7 +47,7 @@ export async function activityLogRoutes(app: FastifyInstance) {
     await db.insert(schema.activityLogs).values(logEntry);
 
     const io = getIO();
-    if (io && logEntry.permission !== 'materials.show') {
+    if (io) {
       io.to(`tenant:${tenantId}`).emit('activity:log', {
         id: logEntry.id,
         tenantId: logEntry.tenantId,
@@ -95,12 +95,10 @@ export async function activityLogRoutes(app: FastifyInstance) {
     const io = getIO();
     if (io) {
       for (const entry of entries) {
-        if (entry.permission !== 'materials.show') {
-          io.to(`tenant:${tenantId}`).emit('activity:log', {
-            ...entry,
-            createdAt: entry.createdAt.toISOString(),
-          });
-        }
+        io.to(`tenant:${tenantId}`).emit('activity:log', {
+          ...entry,
+          createdAt: entry.createdAt.toISOString(),
+        });
       }
     }
 
@@ -126,7 +124,6 @@ export async function activityLogRoutes(app: FastifyInstance) {
 
     const conditions = [
       eq(schema.activityLogs.tenantId, tenantId),
-      ne(schema.activityLogs.permission, 'materials.show'),
     ];
 
     if (query.permission) {

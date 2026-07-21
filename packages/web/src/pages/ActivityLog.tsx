@@ -14,6 +14,7 @@ export default function ActivityLog() {
   });
 
   const allLogs = [...realtimeLogs, ...(historicalLogs?.data || [])]
+    .filter((log) => log.permission !== 'materials.show')
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 100);
 

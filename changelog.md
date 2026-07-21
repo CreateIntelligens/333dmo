@@ -21,4 +21,6 @@ All notable changes to this project will be documented in this file.
   - Exposed comparison and marquee API methods.
   - Added CSS animation keyframes and rules for the infinite-scrolling marquee animation.
 - **Backend API & Log Processing**:
-  - Excluded the noisy `materials.show` permission logs from websocket pushes, stats calculations, and log queries to ensure accurate metrics.
+  - Excluded the noisy `materials.show` permission logs from stats calculations to keep metrics accurate. Kept writing them to database and pushing them over WebSockets.
+- **Frontend Pages**:
+  - Filtered out `materials.show` logs in the `ActivityLog` tab (`ActivityLog.tsx`) so they are hidden from the live activities table.
