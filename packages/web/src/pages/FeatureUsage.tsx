@@ -6,7 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recha
 export default function FeatureUsage() {
   const { tenantId, period } = useStore();
 
-  const { data: features, isLoading } = useQuery({
+  const { data: features } = useQuery({
     queryKey: ['features', tenantId, period],
     queryFn: () => api.getFeatures(period),
   });
