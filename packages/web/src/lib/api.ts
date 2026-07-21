@@ -1,11 +1,14 @@
+import { useStore } from '../stores/useStore';
+
 const API_BASE = '/api/v1';
 
 async function request(path: string, options?: RequestInit) {
+  const tenantId = useStore.getState().tenantId;
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      'X-Tenant-Id': 'family', // TODO: 從 store 取得
+      'X-Tenant-Id': tenantId,
       ...options?.headers,
     },
   });

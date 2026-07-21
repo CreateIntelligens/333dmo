@@ -8,7 +8,7 @@ interface AppState {
 }
 
 export const useStore = create<AppState>((set) => ({
-  tenantId: 'family',
+  tenantId: 'develop',
   setTenantId: (id) => set({ tenantId: id }),
   period: '7d',
   setPeriod: (p) => set({ period: p }),
