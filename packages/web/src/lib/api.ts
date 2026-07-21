@@ -17,6 +17,7 @@ async function request(path: string, options?: RequestInit) {
 }
 
 export const api = {
+  getTenants: () => fetch(`${API_BASE}/tenants`).then((r) => r.json()),
   getOverview: (period = '7d') => request(`/stats/overview?period=${period}`),
   getFeatures: (period = '7d') => request(`/stats/features?period=${period}`),
   getTimeline: (period = '7d', granularity = 'hour') =>

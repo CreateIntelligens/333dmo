@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { useStore } from '../stores/useStore';
+import { getPermissionLabel } from '../lib/permissions';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 export default function Dashboard() {
@@ -22,7 +23,10 @@ export default function Dashboard() {
   });
 
   const overviewData = overview?.data;
-  const featureData = features?.data || [];
+  const featureData = (features?.data || []).map((f: any) => ({
+    ...f,
+    label: getPermissionLabel(f.permission),
+  }));
   const timelineData = (timeline?.data || []).map((item: any) => ({
     time: new Date(item.timeBucket).toLocaleString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit' }),
     count: item.count,
@@ -63,7 +67,7 @@ export default function Dashboard() {
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={featureData} layout="vertical">
               <XAxis type="number" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-              <YAxis type="category" dataKey="permission" tick={{ fontSize: 11, fill: '#94a3b8' }} width={140} />
+              <YAxis type="category" dataKey="label" tick={{ fontSize: 11, fill: '#94a3b8' }} width={140} />
               <Tooltip
                 contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
               />

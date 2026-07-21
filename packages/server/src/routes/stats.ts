@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { db, schema } from '../db/index.js';
-import { eq, and, desc, gte, sql } from 'drizzle-orm';
+import { eq, and, desc, gte, sql, ne } from 'drizzle-orm';
 
 function getTenantId(request: any): string {
   const tenantId = request.headers['x-tenant-id'] as string;
@@ -9,6 +9,17 @@ function getTenantId(request: any): string {
 }
 
 export async function statsRoutes(app: FastifyInstance) {
+  // List all known tenants
+  app.get('/tenants', async (_request, reply) => {
+    const result = await db
+      .selectDistinct({ tenantId: schema.activityLogs.tenantId })
+      .from(schema.activityLogs)
+      .where(ne(schema.activityLogs.tenantId, ''));
+
+    return reply.send({
+      data: result.map((r) => r.tenantId),
+    });
+  });
   // Feature usage frequency
   app.get('/stats/features', async (request, reply) => {
     const tenantId = getTenantId(request);

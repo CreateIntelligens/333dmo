@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { useStore } from '../stores/useStore';
 import { useRealtimeLogs } from '../hooks/useRealtimeLogs';
+import { getPermissionLabel } from '../lib/permissions';
 
 export default function ActivityLog() {
   const { tenantId } = useStore();
@@ -46,8 +47,8 @@ export default function ActivityLog() {
                 </td>
                 <td className="p-3">{log.userId || '-'}</td>
                 <td className="p-3">
-                  <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 text-xs">
-                    {log.permission || '-'}
+                  <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 text-xs" title={log.permission || ''}>
+                    {getPermissionLabel(log.permission)}
                   </span>
                 </td>
                 <td className="p-3">
