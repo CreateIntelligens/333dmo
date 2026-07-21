@@ -20,3 +20,5 @@ All notable changes to this project will be documented in this file.
 - **Vite/Nginx API Client (`api.ts` & `index.css`)**:
   - Exposed comparison and marquee API methods.
   - Added CSS animation keyframes and rules for the infinite-scrolling marquee animation.
+- **Backend API & Log Processing**:
+  - Excluded the noisy `materials.show` permission logs from websocket pushes, stats calculations, and log queries to ensure accurate metrics.

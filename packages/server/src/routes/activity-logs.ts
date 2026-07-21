@@ -1,7 +1,7 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { db, schema } from '../db/index.js';
 import { getIO } from '../plugins/websocket.js';
-import { eq, and, desc, gte, lte } from 'drizzle-orm';
+import { eq, and, desc, gte, lte, ne } from 'drizzle-orm';
 import { config } from '../config/index.js';
 
 function getTenantId(request: FastifyRequest): string {
@@ -47,7 +47,7 @@ export async function activityLogRoutes(app: FastifyInstance) {
     await db.insert(schema.activityLogs).values(logEntry);
 
     const io = getIO();
-    if (io) {
+    if (io && logEntry.permission !== 'materials.show') {
       io.to(`tenant:${tenantId}`).emit('activity:log', {
         id: logEntry.id,
         tenantId: logEntry.tenantId,
@@ -95,10 +95,12 @@ export async function activityLogRoutes(app: FastifyInstance) {
     const io = getIO();
     if (io) {
       for (const entry of entries) {
-        io.to(`tenant:${tenantId}`).emit('activity:log', {
-          ...entry,
-          createdAt: entry.createdAt.toISOString(),
-        });
+        if (entry.permission !== 'materials.show') {
+          io.to(`tenant:${tenantId}`).emit('activity:log', {
+            ...entry,
+            createdAt: entry.createdAt.toISOString(),
+          });
+        }
       }
     }
 
@@ -124,6 +126,7 @@ export async function activityLogRoutes(app: FastifyInstance) {
 
     const conditions = [
       eq(schema.activityLogs.tenantId, tenantId),
+      ne(schema.activityLogs.permission, 'materials.show'),
     ];
 
     if (query.permission) {

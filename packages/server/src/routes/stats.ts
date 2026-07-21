@@ -40,7 +40,8 @@ export async function statsRoutes(app: FastifyInstance) {
       .where(
         and(
           eq(schema.activityLogs.tenantId, tenantId),
-          gte(schema.activityLogs.createdAt, since)
+          gte(schema.activityLogs.createdAt, since),
+          ne(schema.activityLogs.permission, 'materials.show')
         )
       )
       .groupBy(schema.activityLogs.permission)
@@ -71,7 +72,8 @@ export async function statsRoutes(app: FastifyInstance) {
       .where(
         and(
           eq(schema.activityLogs.tenantId, tenantId),
-          gte(schema.activityLogs.createdAt, since)
+          gte(schema.activityLogs.createdAt, since),
+          ne(schema.activityLogs.permission, 'materials.show')
         )
       )
       .groupBy(sql`date_trunc(${sql.raw(`'${truncUnit}'`)}, ${schema.activityLogs.createdAt})`)
@@ -100,7 +102,8 @@ export async function statsRoutes(app: FastifyInstance) {
       .where(
         and(
           eq(schema.activityLogs.tenantId, tenantId),
-          gte(schema.activityLogs.createdAt, since)
+          gte(schema.activityLogs.createdAt, since),
+          ne(schema.activityLogs.permission, 'materials.show')
         )
       )
       .groupBy(schema.activityLogs.userId)
@@ -125,7 +128,8 @@ export async function statsRoutes(app: FastifyInstance) {
       .where(
         and(
           eq(schema.activityLogs.tenantId, tenantId),
-          gte(schema.activityLogs.createdAt, since)
+          gte(schema.activityLogs.createdAt, since),
+          ne(schema.activityLogs.permission, 'materials.show')
         )
       );
 
@@ -135,7 +139,8 @@ export async function statsRoutes(app: FastifyInstance) {
       .where(
         and(
           eq(schema.activityLogs.tenantId, tenantId),
-          gte(schema.activityLogs.createdAt, since)
+          gte(schema.activityLogs.createdAt, since),
+          ne(schema.activityLogs.permission, 'materials.show')
         )
       );
 
@@ -145,7 +150,8 @@ export async function statsRoutes(app: FastifyInstance) {
       .where(
         and(
           eq(schema.activityLogs.tenantId, tenantId),
-          gte(schema.activityLogs.createdAt, since)
+          gte(schema.activityLogs.createdAt, since),
+          ne(schema.activityLogs.permission, 'materials.show')
         )
       );
 
@@ -191,7 +197,8 @@ export async function statsRoutes(app: FastifyInstance) {
           and(
             eq(schema.activityLogs.tenantId, tenantId),
             gte(schema.activityLogs.createdAt, start.toDate()),
-            lte(schema.activityLogs.createdAt, end.toDate())
+            lte(schema.activityLogs.createdAt, end.toDate()),
+            ne(schema.activityLogs.permission, 'materials.show')
           )
         );
 
@@ -202,7 +209,8 @@ export async function statsRoutes(app: FastifyInstance) {
           and(
             eq(schema.activityLogs.tenantId, tenantId),
             gte(schema.activityLogs.createdAt, start.toDate()),
-            lte(schema.activityLogs.createdAt, end.toDate())
+            lte(schema.activityLogs.createdAt, end.toDate()),
+            ne(schema.activityLogs.permission, 'materials.show')
           )
         );
 
@@ -213,7 +221,8 @@ export async function statsRoutes(app: FastifyInstance) {
           and(
             eq(schema.activityLogs.tenantId, tenantId),
             gte(schema.activityLogs.createdAt, start.toDate()),
-            lte(schema.activityLogs.createdAt, end.toDate())
+            lte(schema.activityLogs.createdAt, end.toDate()),
+            ne(schema.activityLogs.permission, 'materials.show')
           )
         );
 
@@ -279,7 +288,12 @@ export async function statsRoutes(app: FastifyInstance) {
         count: sql<number>`count(distinct ${schema.activityLogs.userId})::int`,
       })
       .from(schema.activityLogs)
-      .where(gte(schema.activityLogs.createdAt, tenMinutesAgo))
+      .where(
+        and(
+          gte(schema.activityLogs.createdAt, tenMinutesAgo),
+          ne(schema.activityLogs.permission, 'materials.show')
+        )
+      )
       .groupBy(schema.activityLogs.tenantId);
 
     const apiCounts = await db
@@ -288,7 +302,12 @@ export async function statsRoutes(app: FastifyInstance) {
         count: sql<number>`count(*)::int`,
       })
       .from(schema.activityLogs)
-      .where(gte(schema.activityLogs.createdAt, twentyFourHoursAgo))
+      .where(
+        and(
+          gte(schema.activityLogs.createdAt, twentyFourHoursAgo),
+          ne(schema.activityLogs.permission, 'materials.show')
+        )
+      )
       .groupBy(schema.activityLogs.tenantId);
 
     const activeUsersMap = new Map(activeUsers.map((item) => [item.tenantId, item.count]));
