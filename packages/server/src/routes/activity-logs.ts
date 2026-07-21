@@ -1,11 +1,28 @@
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { db, schema } from '../db/index.js';
 import { getIO } from '../plugins/websocket.js';
+import { eq, and, desc, gte, lte } from 'drizzle-orm';
+import { config } from '../config/index.js';
+
+function getTenantId(request: FastifyRequest): string {
+  const tenantId = request.headers['x-tenant-id'] as string;
+  if (!tenantId) throw new Error('Missing X-Tenant-Id header');
+  return tenantId;
+}
+
+function verifyApiKey(request: FastifyRequest): void {
+  const apiKey = request.headers['x-api-key'] as string;
+  if (!apiKey || apiKey !== config.apiKey) {
+    throw new Error('Invalid or missing API key');
+  }
+}
 
 export async function activityLogRoutes(app: FastifyInstance) {
   // Receive log from Agent (line-crm)
   app.post('/logs', async (request, reply) => {
-    const tenantId = (request as any).tenantId;
+    verifyApiKey(request);
+    const tenantId = getTenantId(request);
+
     const body = request.body as {
       user_id?: string;
       permission?: string;
@@ -27,10 +44,8 @@ export async function activityLogRoutes(app: FastifyInstance) {
       createdAt: new Date(),
     };
 
-    // Insert to DB
     await db.insert(schema.activityLogs).values(logEntry);
 
-    // Broadcast via WebSocket
     const io = getIO();
     if (io) {
       io.to(`tenant:${tenantId}`).emit('activity:log', {
@@ -48,9 +63,11 @@ export async function activityLogRoutes(app: FastifyInstance) {
     return reply.status(201).send({ ok: true });
   });
 
-  // Batch receive (multiple logs at once)
+  // Batch receive
   app.post('/logs/batch', async (request, reply) => {
-    const tenantId = (request as any).tenantId;
+    verifyApiKey(request);
+    const tenantId = getTenantId(request);
+
     const body = request.body as { logs: Array<{
       user_id?: string;
       permission?: string;
@@ -90,7 +107,9 @@ export async function activityLogRoutes(app: FastifyInstance) {
 
   // Query logs
   app.get('/logs', async (request, reply) => {
-    const tenantId = (request as any).tenantId;
+    verifyApiKey(request);
+    const tenantId = getTenantId(request);
+
     const query = request.query as {
       limit?: string;
       offset?: string;
@@ -131,5 +150,3 @@ export async function activityLogRoutes(app: FastifyInstance) {
     return reply.send({ data: logs });
   });
 }
-
-import { eq, and, desc, gte, lte } from 'drizzle-orm';

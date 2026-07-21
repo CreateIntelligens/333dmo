@@ -2,10 +2,16 @@ import type { FastifyInstance } from 'fastify';
 import { db, schema } from '../db/index.js';
 import { eq, and, desc, gte, sql } from 'drizzle-orm';
 
+function getTenantId(request: any): string {
+  const tenantId = request.headers['x-tenant-id'] as string;
+  if (!tenantId) throw new Error('Missing X-Tenant-Id header');
+  return tenantId;
+}
+
 export async function statsRoutes(app: FastifyInstance) {
   // Feature usage frequency
   app.get('/stats/features', async (request, reply) => {
-    const tenantId = (request as any).tenantId;
+    const tenantId = getTenantId(request);
     const query = request.query as { period?: string; limit?: string };
 
     const days = parseInt(query.period?.replace('d', '') || '7');
@@ -34,7 +40,7 @@ export async function statsRoutes(app: FastifyInstance) {
 
   // Usage over time (hourly or daily)
   app.get('/stats/timeline', async (request, reply) => {
-    const tenantId = (request as any).tenantId;
+    const tenantId = getTenantId(request);
     const query = request.query as { period?: string; granularity?: string };
 
     const days = parseInt(query.period?.replace('d', '') || '7');
@@ -64,7 +70,7 @@ export async function statsRoutes(app: FastifyInstance) {
 
   // User activity ranking
   app.get('/stats/users', async (request, reply) => {
-    const tenantId = (request as any).tenantId;
+    const tenantId = getTenantId(request);
     const query = request.query as { period?: string; limit?: string };
 
     const days = parseInt(query.period?.replace('d', '') || '7');
@@ -94,7 +100,7 @@ export async function statsRoutes(app: FastifyInstance) {
 
   // Overview KPIs
   app.get('/stats/overview', async (request, reply) => {
-    const tenantId = (request as any).tenantId;
+    const tenantId = getTenantId(request);
     const query = request.query as { period?: string };
 
     const days = parseInt(query.period?.replace('d', '') || '7');
