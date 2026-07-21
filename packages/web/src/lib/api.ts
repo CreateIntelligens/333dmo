@@ -24,6 +24,9 @@ export const api = {
     request(`/stats/timeline?period=${period}&granularity=${granularity}`),
   getUsers: (period = '7d') => request(`/stats/users?period=${period}`),
   getComparison: () => request(`/stats/comparison`),
+  getMethods: (period = '7d') => request(`/stats/methods?period=${period}`),
+  getStatusCodes: (period = '7d') => request(`/stats/status-codes?period=${period}`),
+  getPeakHours: (period = '7d') => request(`/stats/peak-hours?period=${period}`),
   getMarquee: () => fetch(`${API_BASE}/stats/marquee`).then((r) => r.json()),
   getLogs: (params?: Record<string, string>) => {
     const query = new URLSearchParams(params).toString();

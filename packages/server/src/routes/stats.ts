@@ -321,4 +321,103 @@ export async function statsRoutes(app: FastifyInstance) {
 
     return reply.send({ data });
   });
+
+  // HTTP Methods Breakdown
+  app.get('/stats/methods', async (request, reply) => {
+    const tenantId = getTenantId(request);
+    const query = request.query as { period?: string };
+    const days = parseInt(query.period?.replace('d', '') || '7');
+    const since = new Date();
+    since.setDate(since.getDate() - days);
+
+    const result = await db
+      .select({
+        method: schema.activityLogs.method,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(schema.activityLogs)
+      .where(
+        and(
+          eq(schema.activityLogs.tenantId, tenantId),
+          gte(schema.activityLogs.createdAt, since),
+          ne(schema.activityLogs.permission, 'materials.show')
+        )
+      )
+      .groupBy(schema.activityLogs.method);
+
+    return reply.send({ data: result });
+  });
+
+  // Response Status Codes Breakdown
+  app.get('/stats/status-codes', async (request, reply) => {
+    const tenantId = getTenantId(request);
+    const query = request.query as { period?: string };
+    const days = parseInt(query.period?.replace('d', '') || '7');
+    const since = new Date();
+    since.setDate(since.getDate() - days);
+
+    const result = await db
+      .select({
+        statusGroup: sql<string>`case 
+          when status_code >= 500 then '5xx Server Error'
+          when status_code >= 400 then '4xx Client Error'
+          when status_code >= 300 then '3xx Redirect'
+          when status_code >= 200 then '2xx Success'
+          else 'Unknown'
+        end`,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(schema.activityLogs)
+      .where(
+        and(
+          eq(schema.activityLogs.tenantId, tenantId),
+          gte(schema.activityLogs.createdAt, since),
+          ne(schema.activityLogs.permission, 'materials.show')
+        )
+      )
+      .groupBy(sql`case 
+          when status_code >= 500 then '5xx Server Error'
+          when status_code >= 400 then '4xx Client Error'
+          when status_code >= 300 then '3xx Redirect'
+          when status_code >= 200 then '2xx Success'
+          else 'Unknown'
+        end`);
+
+    return reply.send({ data: result });
+  });
+
+  // Peak Hours distribution (0-23 hours)
+  app.get('/stats/peak-hours', async (request, reply) => {
+    const tenantId = getTenantId(request);
+    const query = request.query as { period?: string };
+    const days = parseInt(query.period?.replace('d', '') || '7');
+    const since = new Date();
+    since.setDate(since.getDate() - days);
+
+    const result = await db
+      .select({
+        hour: sql<number>`extract(hour from ${schema.activityLogs.createdAt})::int`,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(schema.activityLogs)
+      .where(
+        and(
+          eq(schema.activityLogs.tenantId, tenantId),
+          gte(schema.activityLogs.createdAt, since),
+          ne(schema.activityLogs.permission, 'materials.show')
+        )
+      )
+      .groupBy(sql`extract(hour from ${schema.activityLogs.createdAt})`)
+      .orderBy(sql`extract(hour from ${schema.activityLogs.createdAt})`);
+
+    // Ensure all 24 hours are represented even with 0 counts
+    const hourlyData = Array.from({ length: 24 }, (_, i) => ({ hour: i, count: 0 }));
+    for (const r of result) {
+      if (r.hour >= 0 && r.hour < 24) {
+        hourlyData[r.hour].count = r.count;
+      }
+    }
+
+    return reply.send({ data: hourlyData });
+  });
 }
