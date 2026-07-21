@@ -17,9 +17,15 @@ export function useRealtimeLogs(tenantId: string) {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
+    setLogs([]);
+
     const unsub = subscribeTenant(tenantId);
 
     const unsubLog = onActivityLog((log: ActivityLog) => {
+      if (log.tenantId !== tenantId) {
+        return;
+      }
+
       setLogs((prev) => [log, ...prev].slice(0, 100)); // Keep last 100
     });
 
