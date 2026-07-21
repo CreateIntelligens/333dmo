@@ -1,0 +1,13 @@
+{
+  "name": "333dmo",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @333dmo/* dev",
+    "dev:server": "pnpm --filter @333dmo/server dev",
+    "dev:web": "pnpm --filter @333dmo/web dev",
+    "build": "pnpm --filter @333dmo/* build",
+    "db:push": "pnpm --filter @333dmo/server db:push",
+    "db:generate": "pnpm --filter @333dmo/server db:generate",
+    "db:migrate": "pnpm --filter @333dmo/server db:migrate"
+  }
+}
