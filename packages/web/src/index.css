@@ -70,9 +70,10 @@
 
 @layer components {
   .card {
-    @apply rounded-sm;
+    @apply rounded-lg;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
   }
 
   .card-hover {
@@ -84,10 +85,8 @@
 
   .panel-heading {
     color: var(--text-primary);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 600;
-    letter-spacing: 0.01em;
   }
 
   .mono-value {
@@ -184,4 +183,19 @@
 
 .animate-marquee:hover {
   animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .animate-marquee {
+    animation: none;
+  }
 }
