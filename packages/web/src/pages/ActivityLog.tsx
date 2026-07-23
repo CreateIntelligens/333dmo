@@ -3,6 +3,8 @@ import { api } from '../lib/api';
 import { useStore } from '../stores/useStore';
 import { useRealtimeLogs } from '../hooks/useRealtimeLogs';
 import { getPermissionLabel } from '../lib/permissions';
+import { formatTaipeiDateTime } from '../lib/date';
+import { Icon } from '../components/ui/Icon';
 
 export default function ActivityLog() {
   const { tenantId } = useStore();
@@ -21,10 +23,13 @@ export default function ActivityLog() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-primary">即時活動串流</h2>
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.22em] text-muted">LineOA Server / Live activity</p>
+          <h2 className="mt-1 text-xl font-semibold text-primary">即時活動串流</h2>
+        </div>
         <div className="flex items-center gap-2 text-sm">
           <span className="w-2 h-2 rounded-full" style={{ backgroundColor: connected ? 'var(--green)' : 'var(--red)' }} />
-          <span className="text-muted">{connected ? 'WebSocket 已連線' : '斷線中'}</span>
+          <span className="text-muted flex items-center gap-1.5"><Icon name="radio" size={14} />{connected ? 'WebSocket 已連線' : '斷線中'}</span>
         </div>
       </div>
 
@@ -44,7 +49,7 @@ export default function ActivityLog() {
             {allLogs.map((log) => (
               <tr key={log.id} className="transition-colors" style={{ borderBottom: '1px solid var(--border)' }}>
                 <td className="p-3 text-muted">
-                  {new Date(log.createdAt).toLocaleString('zh-TW')}
+                  {formatTaipeiDateTime(log.createdAt)}
                 </td>
                 <td className="p-3 text-primary">{log.userId || '—'}</td>
                 <td className="p-3">

@@ -5,26 +5,26 @@
 @tailwind utilities;
 
 @layer base {
-  /* Tokyo Night — Dark */
+  /* Grafana-inspired dark palette */
   .dark {
-    --bg-primary: #1a1b26;
-    --bg-secondary: #24283b;
-    --bg-tertiary: #414868;
-    --text-primary: #c0caf5;
-    --text-secondary: #a9b1d6;
-    --text-muted: #565f89;
-    --border: #3b4261;
-    --accent: #7aa2f7;
-    --accent-soft: rgba(122, 162, 247, 0.15);
-    --green: #9ece6a;
-    --green-soft: rgba(158, 206, 106, 0.15);
-    --yellow: #e0af68;
-    --yellow-soft: rgba(224, 175, 104, 0.15);
-    --red: #f7768e;
-    --red-soft: rgba(247, 118, 142, 0.15);
-    --purple: #bb9af7;
-    --cyan: #7dcfff;
-    --orange: #ff9e64;
+    --bg-primary: #0b0c0f;
+    --bg-secondary: #14161a;
+    --bg-tertiary: #1c1f24;
+    --text-primary: #e5e7eb;
+    --text-secondary: #a7adb8;
+    --text-muted: #737b87;
+    --border: #2d323a;
+    --accent: #ff9830;
+    --accent-soft: rgba(255, 152, 48, 0.14);
+    --green: #73bf69;
+    --green-soft: rgba(115, 191, 105, 0.14);
+    --yellow: #f2cc0c;
+    --yellow-soft: rgba(242, 204, 12, 0.14);
+    --red: #f2495c;
+    --red-soft: rgba(242, 73, 92, 0.14);
+    --purple: #b877d9;
+    --cyan: #5794f2;
+    --orange: #ff9830;
   }
 
   /* Claude-inspired — Light */
@@ -55,11 +55,20 @@
     color: var(--text-primary);
     font-family: 'DM Sans', system-ui, sans-serif;
   }
+
+  button, select, input {
+    font: inherit;
+  }
+
+  button:focus-visible, select:focus-visible, a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 }
 
 @layer components {
   .card {
-    @apply rounded-xl;
+    @apply rounded-md;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border);
   }
@@ -69,6 +78,19 @@
   }
   .card-hover:hover {
     background-color: var(--bg-tertiary);
+  }
+
+  .panel-heading {
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .mono-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
   }
 }
 
@@ -96,13 +118,19 @@
 .recharts-tooltip-wrapper .recharts-default-tooltip {
   background-color: var(--bg-secondary) !important;
   border: 1px solid var(--border) !important;
-  border-radius: 8px !important;
+  border-radius: 4px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28) !important;
 }
 .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-label {
   color: var(--text-secondary) !important;
 }
 .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-item {
   color: var(--text-primary) !important;
+}
+
+.recharts-default-tooltip {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
 }
 
 /* Infinite Marquee Scroll Animation */

@@ -2,9 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { useStore } from '../stores/useStore';
 import { getPermissionLabel } from '../lib/permissions';
+import { formatTaipeiDateTime, formatTaipeiShortHour } from '../lib/date';
+import { Icon, type IconName } from '../components/ui/Icon';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, 
-  LineChart, Line, Cell, AreaChart, Area, PieChart, Pie, Legend 
+  LineChart, Line, Cell, PieChart, Pie, Legend, CartesianGrid
 } from 'recharts';
 
 const COLORS = ['#7aa2f7', '#bb9af7', '#7dcfff', '#e0af68', '#9ece6a', '#f7768e', '#ff9e64', '#73daca'];
@@ -79,7 +81,7 @@ export default function Dashboard() {
   }));
 
   const timelineData = (timeline?.data || []).map((item: any) => ({
-    time: new Date(item.timeBucket).toLocaleString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit' }),
+    time: formatTaipeiShortHour(item.timeBucket),
     count: item.count,
   }));
 
@@ -97,21 +99,30 @@ export default function Dashboard() {
     color: STATUS_COLORS[sc.statusGroup] || '#565f89',
   }));
 
-  // Prepare Peak Hours data for Area chart
+  // Prepare Peak Hours data as a 24-hour histogram in Taipei time
   const peakHoursData = (peakHours?.data || []).map((h: any) => ({
-    hourLabel: `${h.hour}h`,
+    hourLabel: `${String(h.hour).padStart(2, '0')}:00`,
     count: h.count,
   }));
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-primary">儀表板</h2>
+      <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.22em] text-muted">LineOA Server / Overview</p>
+          <h2 className="mt-1 text-xl font-semibold text-primary">儀表板</h2>
+        </div>
+        <div className="flex items-center gap-2 text-[11px] text-muted mono-value">
+          <Icon name="clock-3" size={13} />
+          <span>時區 Asia/Taipei · UTC+8</span>
+        </div>
+      </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-3 gap-4">
-        <KpiCard title="總 API 呼叫" value={overviewData?.totalRequests || 0} icon="📡" />
-        <KpiCard title="活躍使用者" value={overviewData?.uniqueUsers || 0} icon="👤" />
-        <KpiCard title="使用功能數" value={overviewData?.uniqueFeatures || 0} icon="🧩" />
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        <KpiCard title="總 API 呼叫" value={overviewData?.totalRequests || 0} icon="activity" tone="accent" />
+        <KpiCard title="活躍使用者" value={overviewData?.uniqueUsers || 0} icon="users" tone="green" />
+        <KpiCard title="使用功能數" value={overviewData?.uniqueFeatures || 0} icon="wrench" tone="cyan" />
       </div>
 
       {/* Comparison Analysis */}
@@ -179,33 +190,35 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* API call trend */}
         <div className="card p-5 lg:col-span-2">
-          <h3 className="text-sm font-medium text-secondary mb-4">API 呼叫趨勢</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="panel-heading">API 呼叫趨勢</h3>
+            <span className="text-[10px] text-muted mono-value">台北時間</span>
+          </div>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={timelineData}>
-              <XAxis dataKey="time" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
-              <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
+              <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="time" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} width={34} />
               <Tooltip />
-              <Line type="monotone" dataKey="count" stroke="var(--accent)" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="count" name="API 呼叫" stroke="var(--accent)" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
         {/* Peak Hours distribution */}
         <div className="card p-5">
-          <h3 className="text-sm font-medium text-secondary mb-4">每日使用熱點時段</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="panel-heading">每日使用熱點時段</h3>
+            <span className="text-[10px] text-muted mono-value">24H · UTC+8</span>
+          </div>
           <ResponsiveContainer width="100%" height={250}>
-            <AreaChart data={peakHoursData}>
-              <defs>
-                <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="var(--accent)" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="hourLabel" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} />
-              <YAxis tick={{ fontSize: 10, fill: 'var(--text-muted)' }} />
+            <BarChart data={peakHoursData} barCategoryGap="18%">
+              <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="hourLabel" interval={2} tick={{ fontSize: 9, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} width={30} />
               <Tooltip />
-              <Area type="monotone" dataKey="count" stroke="var(--accent)" strokeWidth={2} fillOpacity={1} fill="url(#colorCount)" />
-            </AreaChart>
+              <Bar dataKey="count" name="使用次數" fill="var(--accent)" radius={[2, 2, 0, 0]} maxBarSize={14} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
@@ -214,11 +227,12 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Features list */}
         <div className="card p-5">
-          <h3 className="text-sm font-medium text-secondary mb-4">功能使用排行</h3>
+          <h3 className="panel-heading mb-4">功能使用排行</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={featureData} layout="vertical">
-              <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
-              <YAxis type="category" dataKey="label" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} width={120} />
+              <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" horizontal={false} />
+              <XAxis type="number" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} />
+              <YAxis type="category" dataKey="label" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} width={120} />
               <Tooltip />
               <Bar dataKey="count" radius={[0, 4, 4, 0]}>
                 {featureData.map((_: any, i: number) => (
@@ -231,7 +245,7 @@ export default function Dashboard() {
 
         {/* HTTP Methods & Status Codes Breakdown */}
         <div className="card p-5">
-          <h3 className="text-sm font-medium text-secondary mb-4">API 請求特徵分析</h3>
+          <h3 className="panel-heading mb-4">API 請求特徵分析</h3>
           <div className="grid grid-cols-2 gap-4">
             {/* Methods breakdown */}
             <div className="flex flex-col items-center">
@@ -316,7 +330,7 @@ export default function Dashboard() {
                     </td>
                     <td className="py-2.5 font-bold" style={{ color: 'var(--accent)' }}>{user.count.toLocaleString()} 次</td>
                     <td className="py-2.5 text-right text-muted">
-                      {new Date(user.lastActive).toLocaleString('zh-TW')}
+                      {formatTaipeiDateTime(user.lastActive)}
                     </td>
                   </tr>
                 ))}
@@ -334,13 +348,15 @@ export default function Dashboard() {
   );
 }
 
-function KpiCard({ title, value, icon }: { title: string; value: number; icon: string }) {
+function KpiCard({ title, value, icon, tone }: { title: string; value: number; icon: IconName; tone: 'accent' | 'green' | 'cyan' }) {
   return (
-    <div className="card p-5 flex items-center gap-4">
-      <div className="text-3xl">{icon}</div>
+    <div className="card p-4 flex items-center gap-4" style={{ borderLeft: `3px solid var(--${tone === 'cyan' ? 'cyan' : tone})` }}>
+      <div className="w-9 h-9 rounded-md flex items-center justify-center" style={{ color: `var(--${tone === 'cyan' ? 'cyan' : tone})`, backgroundColor: `var(--${tone === 'cyan' ? 'accent' : tone}-soft)` }}>
+        <Icon name={icon} size={18} />
+      </div>
       <div>
-        <p className="text-sm text-muted">{title}</p>
-        <p className="text-2xl font-bold text-primary">{value.toLocaleString()}</p>
+        <p className="text-[11px] text-muted">{title}</p>
+        <p className="text-2xl font-semibold text-primary mono-value">{value.toLocaleString()}</p>
       </div>
     </div>
   );

@@ -396,7 +396,9 @@ export async function statsRoutes(app: FastifyInstance) {
 
     const result = await db
       .select({
-        hour: sql<number>`extract(hour from ${schema.activityLogs.createdAt})::int`,
+        // created_at is timestamptz; convert before extracting so the histogram
+        // follows the dashboard's Taiwan timezone instead of the DB session timezone.
+        hour: sql<number>`extract(hour from ${schema.activityLogs.createdAt} AT TIME ZONE 'Asia/Taipei')::int`,
         count: sql<number>`count(*)::int`,
       })
       .from(schema.activityLogs)
@@ -407,8 +409,8 @@ export async function statsRoutes(app: FastifyInstance) {
           ne(schema.activityLogs.permission, 'materials.show')
         )
       )
-      .groupBy(sql`extract(hour from ${schema.activityLogs.createdAt})`)
-      .orderBy(sql`extract(hour from ${schema.activityLogs.createdAt})`);
+      .groupBy(sql`extract(hour from ${schema.activityLogs.createdAt} AT TIME ZONE 'Asia/Taipei')`)
+      .orderBy(sql`extract(hour from ${schema.activityLogs.createdAt} AT TIME ZONE 'Asia/Taipei')`);
 
     // Ensure all 24 hours are represented even with 0 counts
     const hourlyData = Array.from({ length: 24 }, (_, i) => ({ hour: i, count: 0 }));

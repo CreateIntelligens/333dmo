@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - 2026-07-21
+## [Unreleased] - 2026-07-23
 
 ### Added
 - **Backend APIs**:
@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - **Dashboard UI (`Dashboard.tsx`)**:
   - Redesigned dashboard to display multiple new dimensions:
     - **KPI cards** and **Growth comparison analysis** (Today vs Yesterday, This Week vs Last Week).
-    - **API Call Trend** (Line Chart) and **Daily Peak Hours** (Gradient Area Chart).
+    - **API Call Trend** (Line Chart) and **Daily Peak Hours** (24-hour Histogram).
     - **Feature Usage Ranking** (Horizontal Bar Chart).
     - **HTTP Methods & Response Status Codes** (Doughnut charts).
     - **Top Active Users** ranking list (with totals and last active timestamps).
@@ -31,3 +31,14 @@ All notable changes to this project will be documented in this file.
   - Excluded the noisy `materials.show` permission logs from stats calculations to keep metrics accurate. Kept writing them to database and pushing them over WebSockets.
 - **Frontend Pages**:
   - Filtered out `materials.show` logs in the `ActivityLog` tab (`ActivityLog.tsx`) so they are hidden from the live activities table.
+
+### Fixed
+- **Timezone handling**:
+  - Standardized dashboard timestamps and chart labels to `Asia/Taipei` (UTC+8).
+  - Converted backend peak-hour aggregation to Taiwan time before grouping by hour.
+
+### Changed
+- **Dashboard visual system**:
+  - Updated the dark theme to a Grafana-inspired high-density panel layout with restrained borders and orange accent color.
+  - Replaced emoji controls and KPI symbols with a shared Lucide-style SVG icon set.
+  - Replaced the daily peak-hours area chart with a 24-hour histogram for clearer hourly comparison.

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { useStore } from '../stores/useStore';
+import { formatTaipeiDateTime } from '../lib/date';
 
 export default function UserActivity() {
   const { tenantId, period } = useStore();
@@ -33,7 +34,7 @@ export default function UserActivity() {
                 <td className="p-3 font-mono text-primary">{item.userId || '未知'}</td>
                 <td className="p-3 text-right font-mono text-primary">{item.count.toLocaleString()}</td>
                 <td className="p-3 text-secondary">
-                  {item.lastActive ? new Date(item.lastActive).toLocaleString('zh-TW') : '—'}
+                  {formatTaipeiDateTime(item.lastActive)}
                 </td>
               </tr>
             ))}

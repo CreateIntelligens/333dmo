@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
+import { Icon } from '../ui/Icon';
 
 export default function MarqueeHeader() {
   const { data, isLoading } = useQuery({
@@ -16,7 +17,7 @@ export default function MarqueeHeader() {
         className="h-9 flex items-center justify-center text-xs text-muted border-b"
         style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' }}
       >
-        載入即時站台狀態中...
+        <span className="flex items-center gap-2"><Icon name="radio" size={14} /> 載入即時站台狀態中...</span>
       </div>
     );
   }
@@ -27,7 +28,7 @@ export default function MarqueeHeader() {
         className="h-9 flex items-center justify-center text-xs text-muted border-b"
         style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' }}
       >
-        ⚠️ 尚無任何站台活動數據
+        <span className="flex items-center gap-2"><Icon name="radio" size={14} /> 尚無任何站台活動數據</span>
       </div>
     );
   }
@@ -50,14 +51,14 @@ export default function MarqueeHeader() {
         }}
       >
         <span className="w-1.5 h-1.5 rounded-full bg-red animate-ping" style={{ backgroundColor: 'var(--red)' }} />
-        <span>即時站台</span>
+        <span className="tracking-wide">LIVE</span>
       </div>
 
       <div className="flex w-full overflow-hidden pl-24">
         <div className="animate-marquee flex items-center gap-12 py-1">
           {marqueeItems.map((station, index) => (
             <div key={index} className="flex items-center gap-6" style={{ color: 'var(--text-secondary)' }}>
-              <span className="font-bold" style={{ color: 'var(--accent)' }}>📍 {station.tenantId}</span>
+              <span className="font-bold" style={{ color: 'var(--accent)' }}><Icon name="radio" size={12} className="inline mr-1" />{station.tenantId}</span>
               <span className="flex items-center gap-1">
                 <span 
                   className="w-1.5 h-1.5 rounded-full" 
