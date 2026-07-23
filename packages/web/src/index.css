@@ -5,26 +5,26 @@
 @tailwind utilities;
 
 @layer base {
-  /* Grafana-inspired dark palette */
+  /* Original Tokyo Night — Dark */
   .dark {
-    --bg-primary: #0b0c0f;
-    --bg-secondary: #14161a;
-    --bg-tertiary: #1c1f24;
-    --text-primary: #e5e7eb;
-    --text-secondary: #a7adb8;
-    --text-muted: #737b87;
-    --border: #2d323a;
-    --accent: #ff9830;
-    --accent-soft: rgba(255, 152, 48, 0.14);
-    --green: #73bf69;
-    --green-soft: rgba(115, 191, 105, 0.14);
-    --yellow: #f2cc0c;
-    --yellow-soft: rgba(242, 204, 12, 0.14);
-    --red: #f2495c;
-    --red-soft: rgba(242, 73, 92, 0.14);
-    --purple: #b877d9;
-    --cyan: #5794f2;
-    --orange: #ff9830;
+    --bg-primary: #1a1b26;
+    --bg-secondary: #24283b;
+    --bg-tertiary: #414868;
+    --text-primary: #c0caf5;
+    --text-secondary: #a9b1d6;
+    --text-muted: #565f89;
+    --border: #3b4261;
+    --accent: #7aa2f7;
+    --accent-soft: rgba(122, 162, 247, 0.15);
+    --green: #9ece6a;
+    --green-soft: rgba(158, 206, 106, 0.15);
+    --yellow: #e0af68;
+    --yellow-soft: rgba(224, 175, 104, 0.15);
+    --red: #f7768e;
+    --red-soft: rgba(247, 118, 142, 0.15);
+    --purple: #bb9af7;
+    --cyan: #7dcfff;
+    --orange: #ff9e64;
   }
 
   /* Claude-inspired — Light */
@@ -71,9 +71,8 @@
 @layer components {
   .card {
     @apply rounded-sm;
-    background-color: #15171c;
-    border: 1px solid #30343d;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
   }
 
   .card-hover {
@@ -98,16 +97,16 @@
 
   .grafana-toolbar {
     min-height: 3.25rem;
-    background: #111217;
-    border-bottom: 1px solid #2d323a;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
     color: var(--text-secondary);
   }
 
   .grafana-toolbar-button {
     min-height: 2rem;
-    border: 1px solid #363b45;
+    border: 1px solid var(--border);
     border-radius: 0.25rem;
-    background: #1b1e24;
+    background: var(--bg-tertiary);
     color: var(--text-primary);
     padding: 0 0.75rem;
     font-size: 0.8125rem;
@@ -116,19 +115,19 @@
   }
 
   .grafana-toolbar-button:hover {
-    background: #252a31;
-    border-color: #4a515d;
+    background: var(--bg-primary);
+    border-color: var(--accent);
   }
 
   .grafana-toolbar-button.accent {
-    background: #3274d9;
-    border-color: #3274d9;
+    background: var(--accent);
+    border-color: var(--accent);
     color: #fff;
   }
 
   .grafana-toolbar-button.accent:hover {
-    background: #4184eb;
-    border-color: #4184eb;
+    background: var(--accent);
+    border-color: var(--accent);
   }
 }
 
