@@ -29,7 +29,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="w-60 flex flex-col shrink-0"
+      className="w-64 flex flex-col shrink-0"
       style={{ backgroundColor: 'var(--bg-secondary)', borderRight: '1px solid var(--border)' }}
     >
       {/* Header */}
@@ -39,8 +39,8 @@ export default function Sidebar() {
             <Icon name="bar-chart-3" size={19} strokeWidth={2.2} />
           </div>
           <div>
-            <h1 className="text-sm font-bold tracking-wide text-primary">333dmo</h1>
-            <p className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Usage monitor</p>
+            <h1 className="text-base font-bold tracking-wide text-primary">333dmo</h1>
+            <p className="text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Usage monitor</p>
           </div>
           <button
             onClick={toggleTheme}
@@ -56,11 +56,11 @@ export default function Sidebar() {
 
       {/* Tenant selector */}
       <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--border)' }}>
-        <label className="text-[10px] uppercase tracking-wider block mb-1.5" style={{ color: 'var(--text-muted)' }}>資料來源</label>
+        <label className="text-xs uppercase tracking-wider block mb-1.5" style={{ color: 'var(--text-muted)' }}>資料來源</label>
         <select
           value={tenantId}
           onChange={(e) => setTenantId(e.target.value)}
-          className="w-full rounded-md px-2.5 py-1.5 text-xs outline-none transition-colors"
+          className="w-full rounded-md px-2.5 py-2 text-sm outline-none transition-colors"
           style={{
             backgroundColor: 'var(--bg-tertiary)',
             color: 'var(--text-primary)',
@@ -77,15 +77,15 @@ export default function Sidebar() {
       {/* Period selector */}
       <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--border)' }}>
         <div className="flex items-center justify-between mb-1.5">
-          <label className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>時間區間</label>
-          <span className="text-[10px] mono-value" style={{ color: 'var(--accent)' }}>UTC+8</span>
+          <label className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>時間區間</label>
+          <span className="text-xs mono-value" style={{ color: 'var(--accent)' }}>UTC+8</span>
         </div>
         <div className="flex gap-1">
           {periods.map((p) => (
             <button
               key={p.value}
               onClick={() => setPeriod(p.value)}
-              className="flex-1 px-1 py-1 rounded-md text-[11px] font-medium transition-all"
+              className="flex-1 px-1 py-1.5 rounded-md text-xs font-medium transition-all"
               style={
                 period === p.value
                   ? { backgroundColor: 'var(--accent)', color: '#fff' }
@@ -105,7 +105,7 @@ export default function Sidebar() {
             key={item.to}
             to={item.to}
             end={item.to === '/'}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-md text-xs transition-colors mb-0.5"
+            className="flex items-center gap-3 px-3 py-3 rounded-md text-sm transition-colors mb-0.5"
             style={({ isActive }) => ({
               backgroundColor: isActive ? 'var(--accent-soft)' : 'transparent',
               color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
@@ -118,7 +118,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-3 text-[10px] flex items-center gap-2" style={{ borderTop: '1px solid var(--border)', color: 'var(--text-muted)' }}>
+      <div className="p-3 text-xs flex items-center gap-2" style={{ borderTop: '1px solid var(--border)', color: 'var(--text-muted)' }}>
         <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: 'var(--green)', boxShadow: '0 0 6px var(--green)' }} />
         <span>WebSocket connected</span>
       </div>

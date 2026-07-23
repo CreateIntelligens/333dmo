@@ -42,3 +42,5 @@ All notable changes to this project will be documented in this file.
   - Updated the dark theme to a Grafana-inspired high-density panel layout with restrained borders and orange accent color.
   - Replaced emoji controls and KPI symbols with a shared Lucide-style SVG icon set.
   - Replaced the daily peak-hours area chart with a 24-hour histogram for clearer hourly comparison.
+  - Added a Grafana-style dashboard toolbar with breadcrumbs, time range, refresh, share, and edit controls.
+  - Increased dashboard typography, chart labels, KPI values, navigation labels, and panel spacing for better readability.

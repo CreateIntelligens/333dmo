@@ -54,6 +54,8 @@
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
   }
 
   button, select, input {
@@ -68,9 +70,10 @@
 
 @layer components {
   .card {
-    @apply rounded-md;
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border);
+    @apply rounded-sm;
+    background-color: #15171c;
+    border: 1px solid #30343d;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
   }
 
   .card-hover {
@@ -83,14 +86,49 @@
   .panel-heading {
     color: var(--text-primary);
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
   }
 
   .mono-value {
     font-family: 'JetBrains Mono', monospace;
     font-variant-numeric: tabular-nums;
+  }
+
+  .grafana-toolbar {
+    min-height: 3.25rem;
+    background: #111217;
+    border-bottom: 1px solid #2d323a;
+    color: var(--text-secondary);
+  }
+
+  .grafana-toolbar-button {
+    min-height: 2rem;
+    border: 1px solid #363b45;
+    border-radius: 0.25rem;
+    background: #1b1e24;
+    color: var(--text-primary);
+    padding: 0 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    transition: background-color 150ms ease, border-color 150ms ease;
+  }
+
+  .grafana-toolbar-button:hover {
+    background: #252a31;
+    border-color: #4a515d;
+  }
+
+  .grafana-toolbar-button.accent {
+    background: #3274d9;
+    border-color: #3274d9;
+    color: #fff;
+  }
+
+  .grafana-toolbar-button.accent:hover {
+    background: #4184eb;
+    border-color: #4184eb;
   }
 }
 
@@ -130,7 +168,7 @@
 
 .recharts-default-tooltip {
   font-family: 'JetBrains Mono', monospace !important;
-  font-size: 11px !important;
+  font-size: 13px !important;
 }
 
 /* Infinite Marquee Scroll Animation */

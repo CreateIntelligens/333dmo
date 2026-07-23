@@ -106,20 +106,20 @@ export default function Dashboard() {
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.22em] text-muted">LineOA Server / Overview</p>
-          <h2 className="mt-1 text-xl font-semibold text-primary">儀表板</h2>
+          <p className="text-xs uppercase tracking-[0.22em] text-muted">LineOA Server / Overview</p>
+          <h2 className="mt-1 text-2xl font-semibold text-primary">儀表板</h2>
         </div>
-        <div className="flex items-center gap-2 text-[11px] text-muted mono-value">
-          <Icon name="clock-3" size={13} />
+        <div className="flex items-center gap-2 text-xs text-muted mono-value">
+          <Icon name="clock-3" size={15} />
           <span>時區 Asia/Taipei · UTC+8</span>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <KpiCard title="總 API 呼叫" value={overviewData?.totalRequests || 0} icon="activity" tone="accent" />
         <KpiCard title="活躍使用者" value={overviewData?.uniqueUsers || 0} icon="users" tone="green" />
         <KpiCard title="使用功能數" value={overviewData?.uniqueFeatures || 0} icon="wrench" tone="cyan" />
@@ -127,14 +127,14 @@ export default function Dashboard() {
 
       {/* Comparison Analysis */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="card p-5">
+        <div className="card p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-primary">前一日 / 今日 對比</h3>
-            <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}>
+            <h3 className="panel-heading">前一日 / 今日 對比</h3>
+            <span className="hidden text-sm px-3 py-1 rounded-sm font-medium md:inline-block" style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}>
               今日 (00:00 - 現在) vs 昨日 (同時段)
             </span>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-4">
             <ComparisonMetric 
               label="API 呼叫" 
               current={comparisonData?.daily?.today?.requests} 
@@ -156,14 +156,14 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="card p-5">
+        <div className="card p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-primary">上週 / 本週 對比</h3>
-            <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}>
+            <h3 className="panel-heading">上週 / 本週 對比</h3>
+            <span className="hidden text-sm px-3 py-1 rounded-sm font-medium md:inline-block" style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}>
               本週 (週一 - 現在) vs 上週 (同時段)
             </span>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-4">
             <ComparisonMetric 
               label="API 呼叫" 
               current={comparisonData?.weekly?.thisWeek?.requests} 
@@ -189,16 +189,16 @@ export default function Dashboard() {
       {/* Row 3: Main Trend Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* API call trend */}
-        <div className="card p-5 lg:col-span-2">
+        <div className="card p-6 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h3 className="panel-heading">API 呼叫趨勢</h3>
-            <span className="text-[10px] text-muted mono-value">台北時間</span>
+            <span className="text-xs text-muted mono-value">台北時間</span>
           </div>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={280}>
             <LineChart data={timelineData}>
               <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" vertical={false} />
-              <XAxis dataKey="time" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} width={34} />
+              <XAxis dataKey="time" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} />
+              <YAxis tick={{ fontSize: 12, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} width={40} />
               <Tooltip />
               <Line type="monotone" dataKey="count" name="API 呼叫" stroke="var(--accent)" strokeWidth={2} dot={false} />
             </LineChart>
@@ -206,16 +206,16 @@ export default function Dashboard() {
         </div>
 
         {/* Peak Hours distribution */}
-        <div className="card p-5">
+        <div className="card p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="panel-heading">每日使用熱點時段</h3>
-            <span className="text-[10px] text-muted mono-value">24H · UTC+8</span>
+            <span className="text-xs text-muted mono-value">24H · UTC+8</span>
           </div>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={280}>
             <BarChart data={peakHoursData} barCategoryGap="18%">
               <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" vertical={false} />
-              <XAxis dataKey="hourLabel" interval={2} tick={{ fontSize: 9, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} width={30} />
+              <XAxis dataKey="hourLabel" interval={2} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} />
+              <YAxis tick={{ fontSize: 12, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} width={36} />
               <Tooltip />
               <Bar dataKey="count" name="使用次數" fill="var(--accent)" radius={[2, 2, 0, 0]} maxBarSize={14} />
             </BarChart>
@@ -226,13 +226,13 @@ export default function Dashboard() {
       {/* Row 4: Rankings & Features */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Features list */}
-        <div className="card p-5">
+        <div className="card p-6">
           <h3 className="panel-heading mb-4">功能使用排行</h3>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={280}>
             <BarChart data={featureData} layout="vertical">
               <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" horizontal={false} />
-              <XAxis type="number" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} />
-              <YAxis type="category" dataKey="label" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} width={120} />
+              <XAxis type="number" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} />
+              <YAxis type="category" dataKey="label" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} tickLine={false} axisLine={false} width={140} />
               <Tooltip />
               <Bar dataKey="count" radius={[0, 4, 4, 0]}>
                 {featureData.map((_: any, i: number) => (
@@ -244,14 +244,14 @@ export default function Dashboard() {
         </div>
 
         {/* HTTP Methods & Status Codes Breakdown */}
-        <div className="card p-5">
+        <div className="card p-6">
           <h3 className="panel-heading mb-4">API 請求特徵分析</h3>
           <div className="grid grid-cols-2 gap-4">
             {/* Methods breakdown */}
             <div className="flex flex-col items-center">
-              <span className="text-xs text-muted mb-2">HTTP 方法</span>
+              <span className="text-sm text-muted mb-2">HTTP 方法</span>
               {methodsData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={190}>
+                <ResponsiveContainer width="100%" height={220}>
                   <PieChart>
                     <Pie
                       data={methodsData}
@@ -267,19 +267,19 @@ export default function Dashboard() {
                       ))}
                     </Pie>
                     <Tooltip />
-                    <Legend verticalAlign="bottom" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '10px' }} />
+                    <Legend verticalAlign="bottom" height={40} iconType="circle" iconSize={9} wrapperStyle={{ fontSize: '12px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-[190px] flex items-center justify-center text-xs text-muted">無資料</div>
+                <div className="h-[220px] flex items-center justify-center text-sm text-muted">無資料</div>
               )}
             </div>
 
             {/* Status breakdown */}
             <div className="flex flex-col items-center">
-              <span className="text-xs text-muted mb-2">回應狀態碼</span>
+              <span className="text-sm text-muted mb-2">回應狀態碼</span>
               {statusCodesData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={190}>
+                <ResponsiveContainer width="100%" height={220}>
                   <PieChart>
                     <Pie
                       data={statusCodesData}
@@ -295,11 +295,11 @@ export default function Dashboard() {
                       ))}
                     </Pie>
                     <Tooltip />
-                    <Legend verticalAlign="bottom" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '10px' }} />
+                    <Legend verticalAlign="bottom" height={40} iconType="circle" iconSize={9} wrapperStyle={{ fontSize: '12px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-[190px] flex items-center justify-center text-xs text-muted">無資料</div>
+                <div className="h-[220px] flex items-center justify-center text-sm text-muted">無資料</div>
               )}
             </div>
           </div>
@@ -308,10 +308,10 @@ export default function Dashboard() {
 
       {/* Row 5: Active Users details */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="card p-5">
-          <h3 className="text-sm font-semibold text-primary mb-4">最活躍使用者排行</h3>
+        <div className="card p-6">
+          <h3 className="panel-heading mb-4">最活躍使用者排行</h3>
           <div className="overflow-x-auto">
-            <table className="w-full text-xs">
+            <table className="w-full text-sm">
               <thead>
                 <tr className="text-muted border-b border-themed text-left">
                   <th className="pb-2">使用者 ID</th>
@@ -323,13 +323,13 @@ export default function Dashboard() {
                 {usersData.slice(0, 5).map((user: any, index: number) => (
                   <tr key={user.userId || index} className="border-b border-themed last:border-0 hover:bg-secondary/30 transition-colors" style={{ borderColor: 'var(--border)' }}>
                     <td className="py-2.5 font-medium text-primary flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px]" style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}>
+                      <span className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs" style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}>
                         {(user.userId || 'U').slice(0, 2).toUpperCase()}
                       </span>
                       {user.userId || '未登入/系統'}
                     </td>
-                    <td className="py-2.5 font-bold" style={{ color: 'var(--accent)' }}>{user.count.toLocaleString()} 次</td>
-                    <td className="py-2.5 text-right text-muted">
+                    <td className="py-3 font-bold mono-value" style={{ color: 'var(--accent)' }}>{user.count.toLocaleString()} 次</td>
+                    <td className="py-3 text-right text-muted">
                       {formatTaipeiDateTime(user.lastActive)}
                     </td>
                   </tr>
@@ -350,13 +350,13 @@ export default function Dashboard() {
 
 function KpiCard({ title, value, icon, tone }: { title: string; value: number; icon: IconName; tone: 'accent' | 'green' | 'cyan' }) {
   return (
-    <div className="card p-4 flex items-center gap-4" style={{ borderLeft: `3px solid var(--${tone === 'cyan' ? 'cyan' : tone})` }}>
-      <div className="w-9 h-9 rounded-md flex items-center justify-center" style={{ color: `var(--${tone === 'cyan' ? 'cyan' : tone})`, backgroundColor: `var(--${tone === 'cyan' ? 'accent' : tone}-soft)` }}>
-        <Icon name={icon} size={18} />
+    <div className="card p-5 flex items-center gap-4" style={{ borderLeft: `3px solid var(--${tone === 'cyan' ? 'cyan' : tone})` }}>
+      <div className="w-11 h-11 rounded-md flex items-center justify-center" style={{ color: `var(--${tone === 'cyan' ? 'cyan' : tone})`, backgroundColor: `var(--${tone === 'cyan' ? 'accent' : tone}-soft)` }}>
+        <Icon name={icon} size={22} />
       </div>
       <div>
-        <p className="text-[11px] text-muted">{title}</p>
-        <p className="text-2xl font-semibold text-primary mono-value">{value.toLocaleString()}</p>
+        <p className="text-sm text-muted">{title}</p>
+        <p className="text-3xl font-semibold text-primary mono-value">{value.toLocaleString()}</p>
       </div>
     </div>
   );
@@ -367,25 +367,25 @@ function ComparisonMetric({ label, current = 0, previous = 0, change = 0 }: { la
   const isDown = change < 0;
   
   return (
-    <div className="flex flex-col p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border)' }}>
-      <span className="text-xs text-muted mb-1 block">{label}</span>
+    <div className="flex flex-col p-4 rounded-sm" style={{ backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border)' }}>
+      <span className="text-sm text-muted mb-1 block">{label}</span>
       <div className="flex items-baseline gap-1 flex-wrap">
-        <span className="text-base font-bold text-primary">{current?.toLocaleString() ?? 0}</span>
-        <span className="text-[10px] text-muted">/ {previous?.toLocaleString() ?? 0}</span>
+        <span className="text-xl font-bold text-primary mono-value">{current?.toLocaleString() ?? 0}</span>
+        <span className="text-xs text-muted">/ {previous?.toLocaleString() ?? 0}</span>
       </div>
       <div className="mt-2 flex">
         {isUp && (
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded flex items-center gap-0.5 bg-green-soft text-green">
+          <span className="text-xs font-semibold px-2 py-1 rounded flex items-center gap-0.5 bg-green-soft text-green">
             ↑ +{change}%
           </span>
         )}
         {isDown && (
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded flex items-center gap-0.5 bg-red-soft text-red">
+          <span className="text-xs font-semibold px-2 py-1 rounded flex items-center gap-0.5 bg-red-soft text-red">
             ↓ {change}%
           </span>
         )}
         {!isUp && !isDown && (
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-tertiary text-muted" style={{ backgroundColor: 'var(--bg-tertiary)' }}>
+          <span className="text-xs font-semibold px-2 py-1 rounded bg-tertiary text-muted" style={{ backgroundColor: 'var(--bg-tertiary)' }}>
             0%
           </span>
         )}
