@@ -106,35 +106,36 @@ export default function Dashboard() {
   }));
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
-        <div>
+    <div className="mx-auto max-w-screen-2xl space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
           <p className="text-xs uppercase tracking-[0.22em] text-muted">LineOA Server / Overview</p>
-          <h2 className="mt-1 text-2xl font-semibold text-primary">儀表板</h2>
+          <h2 className="mt-1 text-balance text-2xl font-semibold text-primary">儀表板</h2>
+          <p className="mt-1 max-w-2xl text-pretty text-sm text-secondary">掌握 API 使用量、活躍使用者與錯誤分布，快速找到值得關注的變化。</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-muted mono-value">
+        <div className="flex shrink-0 items-center gap-2 text-xs text-muted mono-value tabular-nums">
           <Icon name="clock-3" size={15} />
           <span>時區 Asia/Taipei · UTC+8</span>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <KpiCard title="總 API 呼叫" value={overviewData?.totalRequests || 0} icon="activity" tone="accent" />
         <KpiCard title="活躍使用者" value={overviewData?.uniqueUsers || 0} icon="users" tone="green" />
         <KpiCard title="使用功能數" value={overviewData?.uniqueFeatures || 0} icon="wrench" tone="cyan" />
       </div>
 
       {/* Comparison Analysis */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="card p-6">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <div className="card p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="panel-heading">前一日 / 今日 對比</h3>
-            <span className="hidden text-sm px-3 py-1 rounded-sm font-medium md:inline-block" style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}>
+            <span className="hidden rounded-md px-3 py-1 text-xs font-medium md:inline-block" style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}>
               今日 (00:00 - 現在) vs 昨日 (同時段)
             </span>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <ComparisonMetric 
               label="API 呼叫" 
               current={comparisonData?.daily?.today?.requests} 
@@ -156,14 +157,14 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="card p-6">
+        <div className="card p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="panel-heading">上週 / 本週 對比</h3>
-            <span className="hidden text-sm px-3 py-1 rounded-sm font-medium md:inline-block" style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}>
+            <span className="hidden rounded-md px-3 py-1 text-xs font-medium md:inline-block" style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}>
               本週 (週一 - 現在) vs 上週 (同時段)
             </span>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <ComparisonMetric 
               label="API 呼叫" 
               current={comparisonData?.weekly?.thisWeek?.requests} 
@@ -187,9 +188,9 @@ export default function Dashboard() {
       </div>
 
       {/* Row 3: Main Trend Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         {/* API call trend */}
-        <div className="card p-6 lg:col-span-2">
+        <div className="card p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h3 className="panel-heading">API 呼叫趨勢</h3>
             <span className="text-xs text-muted mono-value">台北時間</span>
@@ -206,7 +207,7 @@ export default function Dashboard() {
         </div>
 
         {/* Peak Hours distribution */}
-        <div className="card p-6">
+        <div className="card p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="panel-heading">每日使用熱點時段</h3>
             <span className="text-xs text-muted mono-value">24H · UTC+8</span>
@@ -224,9 +225,9 @@ export default function Dashboard() {
       </div>
 
       {/* Row 4: Rankings & Features */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         {/* Features list */}
-        <div className="card p-6">
+        <div className="card p-5">
           <h3 className="panel-heading mb-4">功能使用排行</h3>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={featureData} layout="vertical">
@@ -244,7 +245,7 @@ export default function Dashboard() {
         </div>
 
         {/* HTTP Methods & Status Codes Breakdown */}
-        <div className="card p-6">
+        <div className="card p-5">
           <h3 className="panel-heading mb-4">API 請求特徵分析</h3>
           <div className="grid grid-cols-2 gap-4">
             {/* Methods breakdown */}
@@ -307,11 +308,11 @@ export default function Dashboard() {
       </div>
 
       {/* Row 5: Active Users details */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="card p-6">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <div className="card overflow-hidden p-5">
           <h3 className="panel-heading mb-4">最活躍使用者排行</h3>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="min-w-[32rem] w-full text-sm">
               <thead>
                 <tr className="text-muted border-b border-themed text-left">
                   <th className="pb-2">使用者 ID</th>
@@ -350,13 +351,13 @@ export default function Dashboard() {
 
 function KpiCard({ title, value, icon, tone }: { title: string; value: number; icon: IconName; tone: 'accent' | 'green' | 'cyan' }) {
   return (
-    <div className="card p-5 flex items-center gap-4" style={{ borderLeft: `3px solid var(--${tone === 'cyan' ? 'cyan' : tone})` }}>
-      <div className="w-11 h-11 rounded-md flex items-center justify-center" style={{ color: `var(--${tone === 'cyan' ? 'cyan' : tone})`, backgroundColor: `var(--${tone === 'cyan' ? 'accent' : tone}-soft)` }}>
+    <div className="card flex items-center gap-4 p-5" style={{ borderLeft: `3px solid var(--${tone === 'cyan' ? 'cyan' : tone})` }}>
+      <div className="flex size-11 shrink-0 items-center justify-center rounded-md" style={{ color: `var(--${tone === 'cyan' ? 'cyan' : tone})`, backgroundColor: `var(--${tone === 'cyan' ? 'accent' : tone}-soft)` }}>
         <Icon name={icon} size={22} />
       </div>
       <div>
         <p className="text-sm text-muted">{title}</p>
-        <p className="text-3xl font-semibold text-primary mono-value">{value.toLocaleString()}</p>
+        <p className="text-3xl font-semibold text-primary mono-value tabular-nums">{value.toLocaleString()}</p>
       </div>
     </div>
   );
@@ -370,8 +371,8 @@ function ComparisonMetric({ label, current = 0, previous = 0, change = 0 }: { la
     <div className="flex flex-col p-4 rounded-sm" style={{ backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border)' }}>
       <span className="text-sm text-muted mb-1 block">{label}</span>
       <div className="flex items-baseline gap-1 flex-wrap">
-        <span className="text-xl font-bold text-primary mono-value">{current?.toLocaleString() ?? 0}</span>
-        <span className="text-xs text-muted">/ {previous?.toLocaleString() ?? 0}</span>
+        <span className="text-xl font-bold text-primary mono-value tabular-nums">{current?.toLocaleString() ?? 0}</span>
+        <span className="text-xs text-muted tabular-nums">/ {previous?.toLocaleString() ?? 0}</span>
       </div>
       <div className="mt-2 flex">
         {isUp && (
