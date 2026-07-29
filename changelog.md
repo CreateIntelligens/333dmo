@@ -33,6 +33,8 @@ All notable changes to this project will be documented in this file.
   - Filtered out `materials.show` logs in the `ActivityLog` tab (`ActivityLog.tsx`) so they are hidden from the live activities table.
 
 ### Fixed
+- **Scheduled-reboot recovery**:
+  - Configured PostgreSQL and Redis with `restart: unless-stopped`, ensuring the data-ingestion and dashboard services recover automatically after a host reboot.
 - **Timezone handling**:
   - Standardized dashboard timestamps and chart labels to `Asia/Taipei` (UTC+8).
   - Converted backend peak-hour aggregation to Taiwan time before grouping by hour.
